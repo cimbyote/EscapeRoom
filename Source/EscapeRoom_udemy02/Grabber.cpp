@@ -31,7 +31,16 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	
+	//TODO refactor this nightmare
+	FVector viewPosition;
+	FRotator viewRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT viewPosition, OUT viewRotation);
+
+	FVector LineTraceEnd = viewPosition + viewRotation.Vector() * Reach;
+	if (physicsHandle->GrabbedComponent)
+	{
+		physicsHandle->SetTargetLocation(LineTraceEnd);
+	}
 }
 
 void UGrabber::Grab()
@@ -39,10 +48,17 @@ void UGrabber::Grab()
 	UE_LOG(LogTemp, Warning, TEXT("Grab"));
 
 	///Try & Reach actors with physics body collision channel set
-	GetFirstPhysicsBodyInReach();
+	auto hitResult = GetFirstPhysicsBodyInReach();
+	auto grabbedComponent = hitResult.GetComponent();
+	auto ActorHit = hitResult.GetActor();
 
 	///if we hit something, then attach a physics handle
-	//TODO: Attach physics handle
+	
+	if (ActorHit)
+	{
+		physicsHandle->GrabComponent(grabbedComponent, NAME_None, grabbedComponent->GetOwner()->GetActorLocation(), true);
+	}
+	
 }
 
 void UGrabber::Release()
@@ -50,6 +66,8 @@ void UGrabber::Release()
 	UE_LOG(LogTemp, Warning, TEXT("Release"));
 
 	//TODO: Detach physics handle
+	physicsHandle->ReleaseComponent();
+	
 }
 
 ///Bind Buttons to Functions
@@ -90,5 +108,5 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 		UE_LOG(LogTemp, Warning, TEXT("Hitting: %s"), *(ActorHit->GetName()));
 	}
 
-	return FHitResult();
+	return hit;
 }
