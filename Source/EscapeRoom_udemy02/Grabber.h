@@ -44,4 +44,6 @@ private:
 	void BindPhysics();
 
 	const FHitResult GetFirstPhysicsBodyInReach();
+	FVector GetReachLineEnd();
+	FVector GetReachLineStart();
 };
