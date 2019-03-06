@@ -35,10 +35,10 @@ public:
 private:
 
 	AActor* Owner;
+	float GetTotalMassOfActorsOnPlate();
 
 	UPROPERTY(VisibleAnywhere) float OpenAngle = 90.f;
 	UPROPERTY(EditAnywhere) ATriggerVolume* PressurePlate;
-	UPROPERTY(EditAnywhere) float DoorCloseDelay = 1.f;
-	UPROPERTY(VisibleAnywhere) AActor* ActorThatOpens;
-		
+	UPROPERTY(EditAnywhere) float DoorCloseDelay = 1.f;	
+	UPROPERTY(EditAnywhere) float triggerMass = 50.f;
 };
