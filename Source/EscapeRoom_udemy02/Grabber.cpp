@@ -15,15 +15,13 @@ UGrabber::UGrabber()
 	// ...
 }
 
-
 // Called when the game starts
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	//UE_LOG(LogTemp, Warning, TEXT("grabber works yo"));
-	
+	BindPhysics();
+	BindInput();
 }
 
 
@@ -33,24 +31,57 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+	
+}
+
+void UGrabber::Grab()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Grab"));
+
+	///Try & Reach actors with physics body collision channel set
+	GetFirstPhysicsBodyInReach();
+
+	///if we hit something, then attach a physics handle
+	//TODO: Attach physics handle
+}
+
+void UGrabber::Release()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Release"));
+
+	//TODO: Detach physics handle
+}
+
+///Bind Buttons to Functions
+void UGrabber::BindInput()
+{
+	input = GetOwner()->FindComponentByClass<UInputComponent>();
+	input->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
+	input->BindAction("Grab", IE_Released, this, &UGrabber::Release);
+}
+
+///Bind Physics
+void UGrabber::BindPhysics()
+{
+	physicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+
+}
+
+const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
+{
 	FVector viewPosition;
 	FRotator viewRotation;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT viewPosition, OUT viewRotation);
 
-	//UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"), *PlayerViewPointLocation.ToString(), *PlayerViewPointRotation.ToString());
-
 	FVector LineTraceEnd = viewPosition + viewRotation.Vector() * Reach;
-
-	///Draw a red trace to to visualize grabber reach
-	//DrawDebugLine(GetWorld(), viewPosition, LineTraceEnd, FColor(255, 0, 0), false, 0.f, 0, 10.f);
 
 	///Setup raycast stuff
 	FCollisionQueryParams raytraceParams(FName(TEXT("")), false, GetOwner());
 	FHitResult hit;
-	GetWorld()->LineTraceSingleByObjectType(OUT hit, viewPosition, LineTraceEnd, 
-			FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
-				raytraceParams
-		);
+	GetWorld()->LineTraceSingleByObjectType(OUT hit, viewPosition, LineTraceEnd,
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+		raytraceParams
+	);
 
 	///Report what is hit
 	AActor* ActorHit = hit.GetActor();
@@ -59,5 +90,5 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		UE_LOG(LogTemp, Warning, TEXT("Hitting: %s"), *(ActorHit->GetName()));
 	}
 
+	return FHitResult();
 }
-

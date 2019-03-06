@@ -8,6 +8,7 @@
 #include "Engine/TriggerVolume.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Grabber.generated.h"
 
 
@@ -27,9 +28,20 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	//how far the ahead of the player can we reach
+	
+	//Ray-cast and grab what's in reach
+	void Grab();
+	void Release();
 
 private:
+	//how far the player can reach
 	float Reach = 100.f;
-		
+	
+	UPhysicsHandleComponent* physicsHandle = nullptr;
+	UInputComponent* input = nullptr;
+
+	void BindInput();
+	void BindPhysics();
+
+	const FHitResult GetFirstPhysicsBodyInReach();
 };
