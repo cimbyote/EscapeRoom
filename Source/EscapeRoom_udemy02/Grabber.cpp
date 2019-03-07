@@ -32,6 +32,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	// ...
 	
+	if (!physicsHandle) { return; }
 	if (physicsHandle->GrabbedComponent)
 	{
 		physicsHandle->SetTargetLocation(GetReachLineEnd());
