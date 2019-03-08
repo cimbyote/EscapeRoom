@@ -95,3 +95,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+#I just want to get rid of the fucking emoji on the git submit
