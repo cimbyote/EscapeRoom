@@ -46,12 +46,15 @@ float UOpenDoor::GetTotalMassOfActorsOnPlate()
 
 	TArray<AActor*> overlappingActors;
 
+	if (!PressurePlate) { 
+		checkNoEntry(); //should never be called. Used if something show throw an error if it touches this.
+		return 0; }
 	PressurePlate->GetOverlappingActors(overlappingActors); //has an out parameter
 
 	for (const auto* Actor : overlappingActors) //i hate using auto...
 	{
 		totalMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
-		UE_LOG(LogTemp, Warning, TEXT("%s on pressure plate"), *Actor->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("%s on pressure plate"), *Actor->GetName());
 	}
 
 

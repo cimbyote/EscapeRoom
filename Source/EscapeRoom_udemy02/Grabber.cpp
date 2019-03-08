@@ -71,7 +71,9 @@ void UGrabber::BindInput()
 void UGrabber::BindPhysics()
 {
 	physicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-
+	if (!physicsHandle) { 
+		UE_LOG(LogTemp, Error, TEXT("NO PHYSICS HANDLE SET")); 
+	}
 }
 
 
